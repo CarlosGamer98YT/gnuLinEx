@@ -10,8 +10,8 @@ Esta versión actualizada mantiene ese espíritu de libertad, pero reconstruido 
 
 ## 🚀 Características de esta Versión
 
-* **Base:** Debian 13 "Trixie" (Testing/Stable dependiento de la rama).
-* **Entorno de Escritorio:** GNOME 47+ / XFCE (Personalizado con la estética clásica de LinEx).
+* **Base:** Debian 13 "Trixie".
+* **Entorno de Escritorio:** KDE Plasma (Personalizado con la estética clásica de LinEx).
 * **Kernel:** 6.12+ (Optimizado para hardware moderno).
 * **Gestión de Paquetes:** Soporte nativo para `apt`, `flatpak` y `nix`.
 
@@ -20,7 +20,7 @@ Esta versión actualizada mantiene ese espíritu de libertad, pero reconstruido 
 1.  Descarga la ISO desde la sección de [Releases](../../releases).
 2.  Graba la imagen en un USB/DVD (mínimo 8GB):
     ```bash
-    sudo dd if=gnulinex-2026.iso of=/dev/sdX bs=4M status=progress
+    sudo dd if=gnuLinEx.iso of=/dev/sdX bs=4M status=progress
     ```
 3.  Arranca desde el USB/DVD y sigue el asistente de instalación de Debian.
 
