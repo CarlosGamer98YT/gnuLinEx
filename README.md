@@ -39,4 +39,5 @@ Si quieres ayudar a pulir los scripts de personalización o los repositorios:
 3.  Envía un Pull Request.
 
 ---
-*Se legal, copia...*
+
+> "Se legal, copia..."
