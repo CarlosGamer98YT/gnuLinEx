@@ -28,7 +28,6 @@ Esta versión actualizada mantiene ese espíritu de libertad, pero reconstruido 
 
 * **Ofimática:** LibreOffice con plantillas oficiales.
 * **Navegación:** Firefox ESR con configuración de privacidad reforzada.
-* **Herramientas:** Integración directa con servicios de e-administración española (DNIe, FNMT).
 
 ## 🤝 Contribuir
 
