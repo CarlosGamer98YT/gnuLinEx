@@ -39,4 +39,4 @@ Si quieres ayudar a pulir los scripts de personalización o los repositorios:
 3.  Envía un Pull Request.
 
 ---
-*Basado en el legado de la Junta de Extremadura. Desarrollado por la comunidad.*
+*Se legal, copia...*
