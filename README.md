@@ -4,7 +4,7 @@ Una revitalización moderna de la histórica distribución extremeña, adaptada 
 
 ## 📌 ¿Qué es gnuLinEx?
 
-**gnuLinEx** fue una distribución de Linux pionera impulsada por la Junta de Extremadura (España) en 2002. Fue un referente mundial en la implantación de software libre en la administración pública y el sistema educativo, demostrando que la soberanía tecnológica era posible.
+**gnuLinEx** fue una distribución de Linux pionera impulsada por la Junta de Extremadura (España) en 2004. Fue un referente mundial en la implantación de software libre en la administración pública y el sistema educativo, demostrando que la soberanía tecnológica era posible.
 
 Esta versión actualizada mantiene ese espíritu de libertad, pero reconstruido sobre una base moderna y minimalista.
 
