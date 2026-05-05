@@ -24,6 +24,32 @@ Esta versión actualizada mantiene ese espíritu de libertad, pero reconstruido 
 * **Ofimática:** LibreOffice con plantillas oficiales.
 * **Navegación:** Firefox ESR con configuración de privacidad reforzada.
 
+## ⚙️ Crear tu propia ISO (Compilación)
+
+Si prefieres generar la imagen ISO desde cero por ti mismo, asegúrate primero de tener instalado el paquete `live-build`:
+
+```bash
+sudo apt update
+sudo apt install -y live-build
+```
+
+Una vez clonado el repositorio, sitúate en la raíz del proyecto y ejecuta la siguiente cadena de comandos para iniciar la compilación:
+
+```bash
+# Limpiamos la carpeta y la caché
+sudo lb clean
+sudo lb clean --cache
+
+#Compilamos la ISO
+sudo lb config --distribution trixie --binary-images iso-hybrid --architectures amd64 --archive-areas "main contrib non-free non-free-firmware" --apt-recommends false --debootstrap-options "--include=ca-certificates,apt-transport-https"
+
+# Compilamos la ISO (Puede tardar un rato)
+sudo lb build
+
+# Cambiamos los permisos para que puedas ejecutar la ISO
+sudo chmod 777 *.iso
+```
+
 ## 🤝 Contribuir
 
 Si quieres ayudar a pulir los scripts de personalización o los repositorios:
