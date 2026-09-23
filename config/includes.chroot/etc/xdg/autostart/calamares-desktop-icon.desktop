@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Calamares Desktop Icon
+Exec=true
+Hidden=true
+X-GNOME-Autostart-enabled=false
+NoDisplay=true

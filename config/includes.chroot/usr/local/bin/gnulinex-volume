@@ -1,0 +1,36 @@
+#!/bin/bash
+# /usr/local/bin/gnulinex-volume
+# Control y notificación de audio para PipeWire en gnuLinEx (Grulla)
+
+ACTION="$1"
+
+case "$ACTION" in
+    up)
+        wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+ 2>/dev/null || pactl set-sink-volume @DEFAULT_SINK@ +5%
+        ;;
+    down)
+        wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%- 2>/dev/null || pactl set-sink-volume @DEFAULT_SINK@ -5%
+        ;;
+    mute)
+        wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle 2>/dev/null || pactl set-sink-mute @DEFAULT_SINK@ toggle
+        ;;
+    micmute)
+        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle 2>/dev/null || pactl set-source-mute @DEFAULT_SOURCE@ toggle
+        ;;
+    *)
+        echo "Uso: $0 {up|down|mute|micmute}"
+        exit 1
+        ;;
+esac
+
+# Obtener volumen y estado actual para notificación OSD
+VOL_LINE=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null)
+if [ -n "$VOL_LINE" ]; then
+    VOL=$(echo "$VOL_LINE" | awk '{print int($2 * 100)}')
+    MUTED=$(echo "$VOL_LINE" | grep -o '\[MUTED\]')
+    if [ -n "$MUTED" ]; then
+        notify-send -h string:x-canonical-private-synchronous:sys-notify -h int:value:0 -u low "Audio" "Silenciado "
+    else
+        notify-send -h string:x-canonical-private-synchronous:sys-notify -h int:value:"$VOL" -u low "Volumen" "${VOL}% "
+    fi
+fi

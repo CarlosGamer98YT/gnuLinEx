@@ -1,0 +1,52 @@
+#!/bin/bash
+# /usr/local/bin/gnulinex-wallpaper
+# Asegura la aplicación garantizada del fondo de pantalla oficial default.png en gnuLinEx
+
+# 1. Determinar la ubicación de default.png (esqueleto del usuario o sistema)
+WALLPAPER=""
+if [ -f "$HOME/.config/hypr/default.png" ]; then
+    WALLPAPER="$HOME/.config/hypr/default.png"
+elif [ -f "/usr/share/backgrounds/default.png" ]; then
+    WALLPAPER="/usr/share/backgrounds/default.png"
+elif [ -f "$HOME/.config/backgrounds/default.png" ]; then
+    WALLPAPER="$HOME/.config/backgrounds/default.png"
+elif [ -f "$HOME/Imágenes/default.png" ]; then
+    WALLPAPER="$HOME/Imágenes/default.png"
+fi
+
+if [ -z "$WALLPAPER" ]; then
+    exit 0
+fi
+
+# 2. Iniciar hyprpaper si está instalado
+if command -v hyprpaper >/dev/null 2>&1; then
+    # Si no está corriendo, arrancarlo
+    if ! pgrep -x hyprpaper >/dev/null 2>&1; then
+        hyprpaper &
+        sleep 0.6
+    fi
+
+    # Aplicar a todos los monitores activos mediante hyprctl IPC
+    ACTIVE_MONITORS=$(hyprctl monitors -j 2>/dev/null | grep -o '"name": *"[^"]*"' | cut -d'"' -f4)
+    if [ -n "$ACTIVE_MONITORS" ]; then
+        for mon in $ACTIVE_MONITORS; do
+            hyprctl hyprpaper preload "$WALLPAPER" 2>/dev/null || true
+            hyprctl hyprpaper wallpaper "$mon,$WALLPAPER,cover" 2>/dev/null || true
+        done
+    fi
+    # Aplicar también con monitor comodín (fallback)
+    hyprctl hyprpaper preload "$WALLPAPER" 2>/dev/null || true
+    hyprctl hyprpaper wallpaper ",$WALLPAPER,cover" 2>/dev/null || true
+
+    # Comprobación de seguridad: si hyprpaper se cerró, usar swaybg como respaldo
+    sleep 0.4
+    if ! pgrep -x hyprpaper >/dev/null 2>&1; then
+        if command -v swaybg >/dev/null 2>&1; then
+            pkill -x swaybg 2>/dev/null || true
+            swaybg -i "$WALLPAPER" -m fill &
+        fi
+    fi
+elif command -v swaybg >/dev/null 2>&1; then
+    pkill -x swaybg 2>/dev/null || true
+    swaybg -i "$WALLPAPER" -m fill &
+fi

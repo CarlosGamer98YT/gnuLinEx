@@ -1,0 +1,23 @@
+#!/bin/sh
+set -e
+
+# Asegurar que isolinux.bin y todos los módulos .c32 existan en /usr/lib/syslinux y /usr/lib/ISOLINUX
+mkdir -p /usr/lib/syslinux /usr/lib/ISOLINUX
+
+# Enlazar isolinux.bin en ambas ubicaciones
+if [ -f /usr/lib/ISOLINUX/isolinux.bin ] && [ ! -f /usr/lib/syslinux/isolinux.bin ]; then
+    ln -sf /usr/lib/ISOLINUX/isolinux.bin /usr/lib/syslinux/isolinux.bin
+fi
+if [ -f /usr/lib/syslinux/isolinux.bin ] && [ ! -f /usr/lib/ISOLINUX/isolinux.bin ]; then
+    ln -sf /usr/lib/syslinux/isolinux.bin /usr/lib/ISOLINUX/isolinux.bin
+fi
+
+# Enlazar todos los módulos .c32 de /usr/lib/syslinux/modules/bios/ directamente en /usr/lib/syslinux/
+if [ -d /usr/lib/syslinux/modules/bios ]; then
+    for mod in /usr/lib/syslinux/modules/bios/*; do
+        if [ -f "$mod" ]; then
+            base=$(basename "$mod")
+            [ ! -f "/usr/lib/syslinux/$base" ] && ln -sf "$mod" "/usr/lib/syslinux/$base"
+        fi
+    done
+fi

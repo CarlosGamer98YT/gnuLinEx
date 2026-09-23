@@ -1,0 +1,40 @@
+# ##############################################################################
+# Configuración de Swaylock - gnuLinEx (Grulla)
+# Paleta: "Dehesa y Granito"
+# ##############################################################################
+
+# Fondo de pantalla obligatorio oficial de gnuLinEx
+image=/usr/share/backgrounds/default.png
+scaling=fill
+
+# Indicador visual central
+indicator
+indicator-radius=110
+indicator-thickness=10
+
+# Colores en estado normal
+inside-color=141a17cc
+ring-color=2f6a4e
+line-color=2c3932
+key-hl-color=d4a359
+bs-hl-color=c8564a
+separator-color=2c3932
+text-color=eef4f0
+
+# Colores en verificación (tecleando / comprobando)
+inside-ver-color=234d38cc
+ring-ver-color=4cae7a
+line-ver-color=4cae7a
+text-ver-color=ffffff
+
+# Colores en error / fallo de autenticación
+inside-wrong-color=501c18cc
+ring-wrong-color=c8564a
+line-wrong-color=c8564a
+text-wrong-color=ffffff
+
+# Colores al limpiar campo
+inside-clear-color=3d2e1acc
+ring-clear-color=d4a359
+line-clear-color=d4a359
+text-clear-color=ffffff

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Instalar gnuLinEx
+Comment=Instalar el sistema operativo en el disco
+Exec=pkexec calamares
+Icon=logo
+Terminal=false
+Categories=System;

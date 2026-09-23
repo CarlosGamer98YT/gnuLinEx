@@ -1,0 +1,2 @@
+# Este archivo vacío sobreescribe el .desktop original de calamares-settings-debian
+# para evitar que aparezca en el menú de aplicaciones junto al instalar.desktop personalizado.

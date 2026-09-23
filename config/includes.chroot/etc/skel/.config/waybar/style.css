@@ -1,0 +1,196 @@
+/* ##############################################################################
+   Waybar Style - gnuLinEx (Grulla)
+   Paleta: "Dehesa y Granito" (Inspiración Extremeña)
+   ############################################################################## */
+
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "Inter", "Font Awesome 6 Free", "Font Awesome 6 Brands", "DejaVu Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: rgba(20, 26, 23, 0.92);
+    border-radius: 12px;
+    border: 1px solid rgba(44, 57, 50, 0.85);
+    color: #eef4f0;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+/* Botón de Inicio / gnuLinEx Launcher */
+#custom-launcher {
+    background: linear-gradient(135deg, #2f6a4e, #234d38);
+    color: #ffffff;
+    font-size: 15px;
+    padding: 0 12px;
+    margin: 4px 3px 4px 5px;
+    border-radius: 8px;
+    border: 1px solid rgba(76, 174, 122, 0.4);
+    transition: all 0.25s ease;
+}
+
+#custom-launcher:hover {
+    background: linear-gradient(135deg, #3a7d58, #4cae7a);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(76, 174, 122, 0.5);
+}
+
+/* Espacios de Trabajo */
+#workspaces {
+    margin: 4px 3px;
+    padding: 0 2px;
+    border-radius: 8px;
+    background-color: rgba(28, 36, 32, 0.7);
+    border: 1px solid rgba(44, 57, 50, 0.6);
+}
+
+#workspaces button {
+    padding: 0 8px;
+    margin: 2px;
+    border-radius: 6px;
+    color: #90a498;
+    transition: all 0.2s ease;
+}
+
+#workspaces button:hover {
+    background-color: rgba(47, 106, 78, 0.4);
+    color: #ffffff;
+}
+
+#workspaces button.active {
+    background: linear-gradient(135deg, #2f6a4e, #4cae7a);
+    color: #ffffff;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(47, 106, 78, 0.5);
+}
+
+#workspaces button.urgent {
+    background-color: #c8564a;
+    color: #ffffff;
+}
+
+/* Ventana Activa */
+#window {
+    margin: 4px 8px;
+    padding: 0 8px;
+    color: #b0c2b6;
+    font-style: italic;
+    font-size: 12px;
+}
+
+/* Reproductor MPRIS */
+#mpris {
+    margin: 4px 4px;
+    padding: 0 12px;
+    border-radius: 8px;
+    background-color: rgba(28, 36, 32, 0.7);
+    border: 1px solid rgba(44, 57, 50, 0.6);
+    color: #d4a359;
+}
+
+/* Reloj y Calendario */
+#clock {
+    margin: 4px 2px;
+    padding: 0 14px;
+    background: rgba(35, 51, 42, 0.75);
+    border-radius: 8px;
+    color: #ffffff;
+    border: 1px solid rgba(76, 174, 122, 0.45);
+}
+
+/* Módulos de Información y Estado */
+#cpu,
+#memory,
+#temperature,
+#pulseaudio,
+#backlight,
+#battery,
+#network,
+#bluetooth,
+#custom-notifications,
+#tray {
+    margin: 4px 2px;
+    padding: 0 9px;
+    border-radius: 8px;
+    background-color: rgba(28, 36, 32, 0.7);
+    border: 1px solid rgba(44, 57, 50, 0.5);
+    color: #d8e5dc;
+    transition: all 0.2s ease;
+}
+
+#cpu:hover,
+#memory:hover,
+#temperature:hover,
+#pulseaudio:hover,
+#backlight:hover,
+#battery:hover,
+#network:hover,
+#bluetooth:hover,
+#custom-notifications:hover {
+    background-color: rgba(47, 106, 78, 0.4);
+    color: #ffffff;
+}
+
+/* Indicadores de advertencia y estado */
+#cpu.warning, #memory.warning, #temperature.critical {
+    color: #d4a359;
+    border-color: #d4a359;
+}
+
+#pulseaudio.muted {
+    background-color: rgba(28, 36, 32, 0.7);
+    color: #c8564a;
+}
+
+#network.disconnected {
+    color: #c8564a;
+}
+
+#battery.charging, #battery.plugged {
+    color: #4cae7a;
+}
+
+#battery.warning:not(.charging) {
+    color: #d4a359;
+}
+
+#battery.critical:not(.charging) {
+    background-color: #c8564a;
+    color: #ffffff;
+    animation-name: blink;
+    animation-duration: 0.6s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+/* Botón de Apagado / Power */
+#custom-power {
+    margin: 4px 5px 4px 2px;
+    padding: 0 12px;
+    background-color: rgba(200, 86, 74, 0.25);
+    border: 1px solid rgba(200, 86, 74, 0.4);
+    color: #ff9d94;
+    border-radius: 8px;
+    transition: all 0.25s ease;
+}
+
+#custom-power:hover {
+    background-color: #c8564a;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(200, 86, 74, 0.6);
+}
+
+@keyframes blink {
+    to {
+        background-color: #ffffff;
+        color: #000000;
+    }
+}

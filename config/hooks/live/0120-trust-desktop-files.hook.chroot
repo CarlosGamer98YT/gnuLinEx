@@ -1,0 +1,25 @@
+#!/bin/bash
+# Hook: Marca los archivos .desktop del escritorio como confiables/ejecutables
+# y elimina por completo el .desktop y autostart original de calamares-settings-debian.
+
+set -e
+
+# 1. Dar permisos de ejecución a instalar.desktop
+chmod +x /etc/skel/Escritorio/instalar.desktop 2>/dev/null || true
+chmod +x /etc/skel/Desktop/instalar.desktop 2>/dev/null || true
+
+# 2. Eliminar el .desktop original de calamares-settings-debian y sus scripts de autostart
+rm -f /usr/share/applications/calamares-install-debian.desktop 2>/dev/null || true
+rm -f /etc/xdg/autostart/calamares-desktop-icon.desktop 2>/dev/null || true
+rm -f /usr/bin/add-calamares-desktop-icon 2>/dev/null || true
+rm -f /etc/skel/Desktop/calamares-install-debian.desktop 2>/dev/null || true
+rm -f /etc/skel/Escritorio/calamares-install-debian.desktop 2>/dev/null || true
+rm -f /home/*/{Escritorio,Desktop}/calamares-install-debian.desktop 2>/dev/null || true
+
+# 3. Marcar como confiable para XFCE/Thunar (usa gio si está disponible)
+if command -v gio &>/dev/null; then
+    gio set /etc/skel/Escritorio/instalar.desktop metadata::trusted true 2>/dev/null || true
+    gio set /etc/skel/Desktop/instalar.desktop metadata::trusted true 2>/dev/null || true
+fi
+
+echo "Hook 0120: Desktop files de gnuLinEx configurados y calamares-debian eliminado."

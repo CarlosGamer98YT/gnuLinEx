@@ -1,0 +1,36 @@
+# ##############################################################################
+# Configuración de Starship Prompt - gnuLinEx (Grulla)
+# ##############################################################################
+
+add_newline = false
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$cmd_duration\
+$line_break\
+$character"""
+
+[directory]
+style = "bold #4cae7a"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+symbol = " "
+style = "bold #d4a359"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "bold #c8564a"
+format = "([$all_status$ahead_behind]($style) )"
+
+[cmd_duration]
+min_time = 2_000
+style = "italic #d4a359"
+format = "tomó [$duration]($style) "
+
+[character]
+success_symbol = "[➜](bold #4cae7a) "
+error_symbol = "[✗](bold #c8564a) "

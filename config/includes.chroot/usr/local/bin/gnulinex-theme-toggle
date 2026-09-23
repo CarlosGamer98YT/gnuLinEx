@@ -1,0 +1,39 @@
+#!/bin/bash
+# /usr/local/bin/gnulinex-theme-toggle
+# Alternador de tema Claro / Oscuro para el escritorio gnuLinEx (Grulla)
+
+CURRENT_THEME=$(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null | tr -d "'")
+
+if [ "$CURRENT_THEME" = "prefer-light" ]; then
+    # Cambiar a Modo Oscuro (Granito Noche)
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null
+    gsettings set org.gnome.desktop.interface gtk-theme 'Breeze-Dark' 2>/dev/null
+    gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark' 2>/dev/null
+
+    # Actualizar settings.ini de GTK3 y GTK4
+    for file in "$HOME/.config/gtk-3.0/settings.ini" "$HOME/.config/gtk-4.0/settings.ini"; do
+        if [ -f "$file" ]; then
+            sed -i 's/gtk-application-prefer-dark-theme=.*/gtk-application-prefer-dark-theme=1/' "$file"
+            sed -i 's/gtk-theme-name=.*/gtk-theme-name=Breeze-Dark/' "$file"
+            sed -i 's/gtk-icon-theme-name=.*/gtk-icon-theme-name=Papirus-Dark/' "$file"
+        fi
+    done
+
+    notify-send -u low "Tema gnuLinEx" "Modo Oscuro (Granito) activado 🌙"
+else
+    # Cambiar a Modo Claro (Caliza de Dehesa)
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-light' 2>/dev/null
+    gsettings set org.gnome.desktop.interface gtk-theme 'Breeze' 2>/dev/null
+    gsettings set org.gnome.desktop.interface icon-theme 'Papirus' 2>/dev/null
+
+    # Actualizar settings.ini de GTK3 y GTK4
+    for file in "$HOME/.config/gtk-3.0/settings.ini" "$HOME/.config/gtk-4.0/settings.ini"; do
+        if [ -f "$file" ]; then
+            sed -i 's/gtk-application-prefer-dark-theme=.*/gtk-application-prefer-dark-theme=0/' "$file"
+            sed -i 's/gtk-theme-name=.*/gtk-theme-name=Breeze/' "$file"
+            sed -i 's/gtk-icon-theme-name=.*/gtk-icon-theme-name=Papirus/' "$file"
+        fi
+    done
+
+    notify-send -u low "Tema gnuLinEx" "Modo Claro (Caliza) activado ☀️"
+fi

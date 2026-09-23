@@ -1,0 +1,35 @@
+#!/bin/bash
+# /usr/local/bin/gnulinex-battery-monitor
+# Monitor de batería en segundo plano para portátiles en gnuLinEx (Grulla)
+
+# Salir si el equipo no dispone de batería (sobremesa)
+BATTERY_DIR=$(ls -d /sys/class/power_supply/BAT* 2>/dev/null | head -n1)
+if [ -z "$BATTERY_DIR" ] || [ ! -d "$BATTERY_DIR" ]; then
+    exit 0
+fi
+
+WARNED_LOW=false
+WARNED_CRITICAL=false
+
+while true; do
+    if [ -f "$BATTERY_DIR/capacity" ] && [ -f "$BATTERY_DIR/status" ]; then
+        CAPACITY=$(cat "$BATTERY_DIR/capacity")
+        STATUS=$(cat "$BATTERY_DIR/status")
+
+        if [ "$STATUS" = "Discharging" ]; then
+            if [ "$CAPACITY" -le 5 ] && [ "$WARNED_CRITICAL" = false ]; then
+                notify-send -u critical -i battery-empty "BATERÍA CRÍTICA" "El nivel de batería es del ${CAPACITY}%. Conecte el cargador inmediatamente."
+                WARNED_CRITICAL=true
+                WARNED_LOW=true
+            elif [ "$CAPACITY" -le 15 ] && [ "$WARNED_LOW" = false ]; then
+                notify-send -u normal -i battery-caution "Batería Baja" "Nivel de batería: ${CAPACITY}%. Por favor, conecte el cargador."
+                WARNED_LOW=true
+            fi
+        else
+            # Restablecer avisos al conectar el cargador
+            WARNED_LOW=false
+            WARNED_CRITICAL=false
+        fi
+    fi
+    sleep 60
+done

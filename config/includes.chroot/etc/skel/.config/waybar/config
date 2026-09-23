@@ -1,0 +1,178 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 38,
+    "margin-top": 6,
+    "margin-left": 10,
+    "margin-right": 10,
+    "spacing": 4,
+
+    "modules-left": [
+        "custom/launcher",
+        "hyprland/workspaces",
+        "hyprland/window"
+    ],
+
+    "modules-center": [
+        "clock",
+        "mpris"
+    ],
+
+    "modules-right": [
+        "cpu",
+        "memory",
+        "temperature",
+        "pulseaudio",
+        "backlight",
+        "battery",
+        "network",
+        "bluetooth",
+        "custom/notifications",
+        "tray",
+        "custom/power"
+    ],
+
+    "custom/launcher": {
+        "format": "  ",
+        "tooltip": false,
+        "on-click": "wofi --show drun"
+    },
+
+    "hyprland/workspaces": {
+        "disable-scroll": false,
+        "all-outputs": true,
+        "format": "{name}",
+        "on-click": "activate",
+        "sort-by-number": true
+    },
+
+    "hyprland/window": {
+        "format": "{}",
+        "max-length": 35,
+        "separate-outputs": true
+    },
+
+    "clock": {
+        "interval": 1,
+        "format": " {:%H:%M}",
+        "format-alt": " {:%A, %d de %B de %Y}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+
+    "mpris": {
+        "format": "{player_icon} {title} - {artist}",
+        "format-paused": "{status_icon} <i>{title}</i>",
+        "max-length": 30,
+        "player-icons": {
+            "default": "▶",
+            "mpv": "🎵",
+            "spotify": ""
+        },
+        "status-icons": {
+            "paused": "⏸"
+        }
+    },
+
+    "cpu": {
+        "interval": 3,
+        "format": " {usage}%",
+        "tooltip": true,
+        "on-click": "kitty -e htop"
+    },
+
+    "memory": {
+        "interval": 5,
+        "format": " {used:0.1f}G",
+        "tooltip-format": "RAM: {used:0.1f}GiB / {total:0.1f}GiB ({percentage}%)",
+        "on-click": "kitty -e htop"
+    },
+
+    "temperature": {
+        "thermal-zone": 2,
+        "critical-threshold": 80,
+        "format": " {temperatureC}°C",
+        "format-critical": " {temperatureC}°C"
+    },
+
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-bluetooth": "{icon} {volume}%",
+        "format-bluetooth-muted": " {icon}",
+        "format-muted": " Silencio",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+        "scroll-step": 3,
+        "on-click": "pavucontrol",
+        "on-click-right": "gnulinex-volume mute"
+    },
+
+    "backlight": {
+        "device": "intel_backlight",
+        "format": "{icon} {percent}%",
+        "format-icons": ["󰃞", "󰃟", "󰃠"],
+        "scroll-step": 5,
+        "on-scroll-up": "gnulinex-brightness up",
+        "on-scroll-down": "gnulinex-brightness down",
+        "tooltip": true
+    },
+
+    "battery": {
+        "states": {
+            "good": 95,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-alt": "{icon} {time}",
+        "format-icons": ["", "", "", "", ""],
+        "tooltip-format": "{timeTo}, {capacity}%"
+    },
+
+    "network": {
+        "format-wifi": " {essid}",
+        "format-ethernet": " {ipaddr}",
+        "tooltip-format": "{ifname}: {ipaddr} vía {gwaddr}",
+        "format-linked": " (Sin IP)",
+        "format-disconnected": "⚠ Sin red",
+        "format-alt": "{ifname}: {ipaddr}/{cidr}",
+        "on-click-right": "nm-connection-editor"
+    },
+
+    "bluetooth": {
+        "format": " {status}",
+        "format-connected": " {device_alias}",
+        "format-connected-battery": " {device_alias} {device_battery_percentage}%",
+        "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} conectado(s)",
+        "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} conectado(s):\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+        "on-click": "blueman-manager"
+    },
+
+    "custom/notifications": {
+        "tooltip": true,
+        "format": "",
+        "on-click": "makoctl dismiss",
+        "on-click-middle": "makoctl dismiss -a",
+        "on-click-right": "makoctl mode -t dnd"
+    },
+
+    "tray": {
+        "icon-size": 16,
+        "spacing": 8
+    },
+
+    "custom/power": {
+        "format": "⏻",
+        "tooltip": false,
+        "on-click": "gnulinex-powermenu"
+    }
+}

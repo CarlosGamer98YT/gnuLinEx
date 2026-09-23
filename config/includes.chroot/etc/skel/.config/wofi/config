@@ -1,0 +1,11 @@
+width=500
+height=420
+location=center
+show=drun
+prompt=Buscar en gnuLinEx...
+filter_rate=100
+allow_images=true
+image_size=28
+insensitive=true
+no_actions=true
+term=kitty

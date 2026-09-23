@@ -1,0 +1,302 @@
+name: Build gnuLinEx ISO
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+  workflow_dispatch: # Permite ejecutar la acción manualmente
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Instalar dependencias
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            live-build \
+            debootstrap \
+            ca-certificates \
+            apt-transport-https \
+            syslinux-utils \
+            isolinux \
+            syslinux-common \
+            squashfs-tools \
+            xorriso \
+            genisoimage \
+            eatmydata \
+            librsvg2-bin
+      
+      - name: Leer versión
+        id: version
+        run: |
+          VERSION=$(tr -d '\r\n' < version.txt | xargs)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Versión a compilar: $VERSION"
+
+      - name: Caché de live-build
+        uses: actions/cache@v4
+        with:
+          path: cache
+          key: live-build-${{ runner.os }}-trixie-${{ hashFiles('config/package-lists/**', 'config/archives/**', 'config/bootstrap', 'config/chroot', 'config/common') }}
+          restore-keys: |
+            live-build-${{ runner.os }}-trixie-
+            live-build-${{ runner.os }}-
+
+      - name: Restaurar permisos de caché
+        run: |
+          if [ -d cache ]; then
+            sudo chown -R 0:0 cache
+            # Descartar cache de bootstrap si existiera para evitar permisos corruptos en rootfs
+            sudo rm -rf cache/bootstrap
+          fi
+
+      - name: Limpiar entorno live-build (preservando caché)
+        run: |
+          # Limpia etapas temporales pero conserva las descargas de paquetes en cache/
+          sudo lb clean
+          sudo rm -rf cache/bootstrap
+
+      - name: Configurar aceleración de I/O para chroot
+        run: |
+          # Acelerar dpkg desactivando sincronización fsync en disco durante instalaciones
+          sudo mkdir -p config/includes.chroot_before_packages/etc/dpkg/dpkg.cfg.d
+          echo "force-unsafe-io" | sudo tee config/includes.chroot_before_packages/etc/dpkg/dpkg.cfg.d/unsafe-io > /dev/null
+
+      - name: Configurar la ISO
+        run: |
+          # 1. Configuración base de live-build compatible con live-build 3.0
+          sudo lb config \
+            --mode debian \
+            --distribution trixie \
+            --binary-images iso-hybrid \
+            --architectures amd64 \
+            --archive-areas "main contrib non-free non-free-firmware" \
+            --security false \
+            --linux-packages linux-image \
+            --linux-flavours amd64 \
+            --debian-installer false \
+            --bootloader syslinux \
+            --cache-stages none \
+            --firmware-chroot false
+
+          # Configurar compresión multihilo zstd en binary_rootfs sin duplicar flags de mksquashfs
+          if [ -f /usr/lib/live/build/binary_rootfs ]; then
+            sudo sed -i 's/-comp xz/-comp zstd -Xcompression-level 6/g' /usr/lib/live/build/binary_rootfs
+          fi
+
+          # Workaround para debootstrap en live-build
+          echo 'LB_DEBOOTSTRAP_OPTIONS="--include=ca-certificates,apt-transport-https"' | sudo tee -a config/bootstrap
+
+          # Bypass SSL para repositorios HTTPS durante el build
+          sudo mkdir -p config/chroot_apt config/apt config/includes.chroot/etc/apt/apt.conf.d /etc/apt/apt.conf.d
+          {
+            echo 'Acquire::https::Verify-Peer "false";'
+            echo 'Acquire::https::Verify-Host "false";'
+            echo 'Acquire::https::carlosgamer98yt.github.io::Verify-Peer "false";'
+            echo 'Acquire::https::carlosgamer98yt.github.io::Verify-Host "false";'
+          } | sudo tee \
+            config/chroot_apt/apt.conf \
+            config/apt/apt.conf \
+            config/includes.chroot/etc/apt/apt.conf.d/99ssl-workaround \
+            /etc/apt/apt.conf.d/99ssl-workaround > /dev/null
+
+          # Asegurar permisos correctos (1777) en /tmp dentro del chroot
+          sudo mkdir -p config/includes.chroot/tmp
+          sudo chmod 1777 config/includes.chroot/tmp
+
+          # 2. Arreglar llaves GPG (Convertir texto a binario de forma idempotente)
+          for key in config/archives/*.key.chroot config/archives/*.key.binary; do
+            if [ -f "$key" ] && grep -q "BEGIN PGP" "$key"; then
+              sudo gpg --dearmor < "$key" > "${key}.tmp" && sudo mv "${key}.tmp" "$key"
+            fi
+          done
+
+          # 3. Certificados raíz para el sistema final
+          sudo mkdir -p config/includes.chroot/etc/ssl/certs
+          sudo cp -r /etc/ssl/certs/* config/includes.chroot/etc/ssl/certs/
+
+          # 4. Asegurar paquetes base esenciales y bootloader en el chroot
+          sudo mkdir -p config/package-lists
+          printf "%s\n" \
+            "ca-certificates" \
+            "apt-transport-https" \
+            "netpbm" \
+            "fontconfig" \
+            "librsvg2-bin" \
+            "isolinux" \
+            "syslinux-common" \
+            "syslinux" \
+            "syslinux-utils" \
+            "genisoimage" | sudo tee config/package-lists/base.list.chroot > /dev/null
+
+          # 5. Excluir plymouth
+          echo "plymouth- plymouth-label- plymouth-themes- libplymouth5-" | sudo tee config/package-lists/exclude-plymouth.list.chroot > /dev/null
+
+          # 6. Completar config/bootloaders/isolinux con plantillas y binarios reales
+          sudo cp -rn /usr/share/live/build/bootloaders/isolinux/. config/bootloaders/isolinux/
+          # Eliminar cualquier splash.svg para forzar uso directo de splash.png personalizado
+          sudo rm -f /usr/share/live/build/bootloaders/*/splash.svg config/bootloaders/*/splash.svg
+          for dir in /usr/lib/ISOLINUX /usr/lib/syslinux /usr/lib/syslinux/modules/bios; do
+            if [ -d "$dir" ]; then
+              sudo cp -f "$dir"/isolinux.bin config/bootloaders/isolinux/ 2>/dev/null || true
+              sudo cp -f "$dir"/*.c32 config/bootloaders/isolinux/ 2>/dev/null || true
+            fi
+          done
+
+          # 7. Asegurar binarios de bootloader e isohybrid en includes.chroot para resolver dependencias
+          sudo mkdir -p config/includes.chroot/usr/lib/syslinux config/includes.chroot/usr/lib/ISOLINUX config/includes.chroot/usr/bin
+          for dir in /usr/lib/ISOLINUX /usr/lib/syslinux /usr/lib/syslinux/modules/bios; do
+            if [ -d "$dir" ]; then
+              sudo cp -f "$dir"/isolinux.bin config/includes.chroot/usr/lib/ISOLINUX/ 2>/dev/null || true
+              sudo cp -f "$dir"/isolinux.bin config/includes.chroot/usr/lib/syslinux/ 2>/dev/null || true
+              sudo cp -f "$dir"/*.c32 config/includes.chroot/usr/lib/syslinux/ 2>/dev/null || true
+            fi
+          done
+          # Copiar isohybrid directamente al chroot
+          for util in isohybrid isohybrid.pl; do
+            if [ -f "/usr/bin/$util" ]; then
+              sudo cp -f "/usr/bin/$util" config/includes.chroot/usr/bin/
+              sudo chmod +x "config/includes.chroot/usr/bin/$util"
+            fi
+          done
+
+          # Eliminar el bloque de gfxboot/bootlogo exclusivo de Ubuntu en lb_binary_syslinux
+          if [ -f /usr/lib/live/build/lb_binary_syslinux ]; then
+            sudo sed -i '/Hack around the removal of support in gfxboot/,/rm -rf "\$tmpdir"/d' /usr/lib/live/build/lb_binary_syslinux 2>/dev/null || true
+            sudo sed -i '/cpio.*bootlogo/d' /usr/lib/live/build/lb_binary_syslinux 2>/dev/null || true
+            sudo sed -i 's|< \${_TARGET}/bootlogo|< /dev/null|g' /usr/lib/live/build/lb_binary_syslinux 2>/dev/null || true
+            sudo sed -i 's|< binary/isolinux/bootlogo|< /dev/null|g' /usr/lib/live/build/lb_binary_syslinux 2>/dev/null || true
+          fi
+
+          # Corregir el paquete de isohybrid en lb_binary_iso (en Debian se encuentra en syslinux-utils, no en syslinux)
+          if [ -f /usr/lib/live/build/lb_binary_iso ]; then
+            sudo sed -i 's|Check_package chroot/usr/bin/isohybrid syslinux|Check_package chroot/usr/bin/isohybrid syslinux-utils|g' /usr/lib/live/build/lb_binary_iso 2>/dev/null || true
+          fi
+
+          # 8. Compatibilidad para comando 'rsvg' en scripts antiguos de live-build 3.0
+          sudo mkdir -p /usr/local/bin config/includes.chroot/usr/local/bin
+          printf '%s\n' \
+            '#!/bin/bash' \
+            'args=("$@")' \
+            'n=${#args[@]}' \
+            'if [ "$n" -ge 2 ]; then' \
+            '    last="${args[$((n-1))]}"' \
+            '    if [[ "$last" == *.png ]]; then' \
+            '        unset "args[$((n-1))]"' \
+            '        exec rsvg-convert "${args[@]}" -o "$last"' \
+            '    fi' \
+            'fi' \
+            'exec rsvg-convert "$@"' | sudo tee /usr/local/bin/rsvg > /dev/null
+          sudo chmod +x /usr/local/bin/rsvg
+          sudo cp /usr/local/bin/rsvg config/includes.chroot/usr/local/bin/rsvg
+
+      - name: Compilar la ISO (Con compresión multihilo zstd)
+        run: sudo lb build
+
+      - name: Ajustar permisos y normalizar nombre de la ISO
+        run: |
+          sudo chmod 777 *.iso 2>/dev/null || true
+          ISO_SRC=$(ls *.iso 2>/dev/null | head -n 1)
+          if [ -n "$ISO_SRC" ] && [ "$ISO_SRC" != "gnuLinEx-amd64-netinst.iso" ]; then
+            mv "$ISO_SRC" gnuLinEx-amd64-netinst.iso
+          fi
+          
+          # Generar checksum SHA256 para verificación de integridad
+          sha256sum gnuLinEx-amd64-netinst.iso | tee gnuLinEx-amd64-netinst.iso.sha256
+
+      - name: Resumen de compilación
+        run: |
+          ISO_SIZE=$(du -h gnuLinEx-amd64-netinst.iso | cut -f1)
+          ISO_SHA=$(cut -d' ' -f1 < gnuLinEx-amd64-netinst.iso.sha256)
+          
+          echo "### 🐧 gnuLinEx ISO Build Completo" >> $GITHUB_STEP_SUMMARY
+          echo "- **Versión**: ${{ env.VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Archivo**: \`gnuLinEx-amd64-netinst.iso\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tamaño**: $ISO_SIZE" >> $GITHUB_STEP_SUMMARY
+          echo "- **SHA256**: \`$ISO_SHA\`" >> $GITHUB_STEP_SUMMARY
+          
+          ARCHIVO_CAMBIOS="cambios.txt"
+          if [ -f "$ARCHIVO_CAMBIOS" ]; then
+            echo -e "\n--- Cambios de la versión ${{ env.VERSION }} ---"
+            sed -n "/^\[${{ env.VERSION }}\]/,/^\[/ { /^\[${{ env.VERSION }}\]/p; /^\[/!p }" "$ARCHIVO_CAMBIOS"
+          fi
+
+      - name: Preparar permisos para guardar caché
+        if: always()
+        run: |
+          if [ -d cache ]; then
+            # Descartar cache/bootstrap si existiese (solo se cachean paquetes .deb)
+            sudo rm -rf cache/bootstrap
+            sudo chown -R "$USER:$USER" cache
+            sudo chmod -R a+rX cache
+          fi
+
+      - name: Limpiar artefactos antiguos para liberar cuota de Actions
+        run: |
+          echo "Buscando artefactos antiguos..."
+          gh api --paginate "/repos/${{ github.repository }}/actions/artifacts" --jq '.artifacts[].id' 2>/dev/null | while read -r id; do
+            if [ -n "$id" ]; then
+              echo "Eliminando artefacto antiguo ID: $id"
+              gh api -X DELETE "/repos/${{ github.repository }}/actions/artifacts/$id" 2>/dev/null || true
+            fi
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Publicar ISO en GitHub Releases
+        run: |
+          TAG="v${{ env.VERSION }}"
+          echo "Publicando release $TAG con la ISO compilada..."
+          
+          NOTES_TEXT="Compilación automática de gnuLinEx ISO $TAG"
+          ARCHIVO_CAMBIOS="cambios.txt"
+          if [ -f "$ARCHIVO_CAMBIOS" ]; then
+            CAMBIOS=$(sed -n "/^\[${{ env.VERSION }}\]/,/^\[/ { /^\[${{ env.VERSION }}\]/p; /^\[/!p }" "$ARCHIVO_CAMBIOS" 2>/dev/null || true)
+            if [ -n "$CAMBIOS" ]; then
+              NOTES_TEXT="$CAMBIOS"
+            fi
+          fi
+
+          # Intentar subir archivos si el release ya existe; si no existe, crearlo
+          if ! gh release upload "$TAG" gnuLinEx-amd64-netinst.iso gnuLinEx-amd64-netinst.iso.sha256 --clobber 2>/dev/null; then
+            echo "El release $TAG no existe o necesita crearse. Creando nuevo release..."
+            gh release create "$TAG" \
+              gnuLinEx-amd64-netinst.iso \
+              gnuLinEx-amd64-netinst.iso.sha256 \
+              --title "gnuLinEx $TAG" \
+              --notes "$NOTES_TEXT"
+          else
+            echo "Archivos actualizados con éxito en release existente $TAG."
+            gh release edit "$TAG" --title "gnuLinEx $TAG" --notes "$NOTES_TEXT" || true
+          fi
+
+          echo "- **Descarga directa (GitHub Releases)**: [Descargar gnuLinEx $TAG](${{ github.server_url }}/${{ github.repository }}/releases/tag/$TAG)" >> $GITHUB_STEP_SUMMARY
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Subir ISO como artefacto (Respaldo en Actions)
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: gnuLinEx-${{ env.VERSION }}-amd64
+          path: |
+            gnuLinEx-amd64-netinst.iso
+            gnuLinEx-amd64-netinst.iso.sha256
+          retention-days: 1
+          compression-level: 0

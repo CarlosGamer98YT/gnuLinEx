@@ -1,0 +1,3 @@
+#!/bin/sh
+# Dummy script: deshabilitado para gnuLinEx (evita crear calamares-install-debian.desktop)
+exit 0

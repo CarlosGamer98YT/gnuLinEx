@@ -1,0 +1,53 @@
+#!/bin/bash
+# /usr/local/bin/gnulinex-hardware-detect
+# Detección y adaptación automática de hardware (Portátil / Sobremesa) en gnuLinEx
+
+CACHE_LOG="$HOME/.cache/gnulinex-hardware.log"
+mkdir -p "$HOME/.cache"
+
+IS_LAPTOP=false
+CHASSIS_TYPE=$(cat /sys/class/dmi/id/chassis_type 2>/dev/null || echo 0)
+
+# Códigos DMI de chasis para portátiles / notebooks: 8, 9, 10, 11, 12, 14, 31, 32
+case "$CHASSIS_TYPE" in
+    8|9|10|11|12|14|31|32)
+        IS_LAPTOP=true
+        ;;
+esac
+
+# Comprobación adicional por presencia de batería
+if ls /sys/class/power_supply/BAT* >/dev/null 2>&1; then
+    IS_LAPTOP=true
+fi
+
+echo "=== Detección de Hardware gnuLinEx ===" > "$CACHE_LOG"
+echo "Fecha: $(date)" >> "$CACHE_LOG"
+echo "Chassis Type: $CHASSIS_TYPE | Es portátil: $IS_LAPTOP" >> "$CACHE_LOG"
+
+if [ "$IS_LAPTOP" = true ]; then
+    echo "Dispositivo: PORTÁTIL detectado." >> "$CACHE_LOG"
+    # Asegurar permisos de brillo para el usuario
+    if command -v brightnessctl >/dev/null 2>&1; then
+        echo "Control de brillo disponible: $(brightnessctl -m 2>/dev/null)" >> "$CACHE_LOG"
+    fi
+else
+    echo "Dispositivo: SOBREMESA detectado." >> "$CACHE_LOG"
+fi
+
+# Detectar Bluetooth
+if ls /sys/class/bluetooth/hci* >/dev/null 2>&1; then
+    echo "Adaptador Bluetooth: PRESENTE" >> "$CACHE_LOG"
+else
+    echo "Adaptador Bluetooth: NO DETECTADO" >> "$CACHE_LOG"
+fi
+
+# Detectar Wi-Fi
+if ls /sys/class/net/*/wireless >/dev/null 2>&1 || command -v iw >/dev/null 2>&1; then
+    echo "Adaptador Wi-Fi: PRESENTE" >> "$CACHE_LOG"
+else
+    echo "Adaptador Wi-Fi: NO DETECTADO" >> "$CACHE_LOG"
+fi
+
+# Monitores conectados
+MONITORS=$(hyprctl monitors -j 2>/dev/null | grep -c '"id":' || echo 1)
+echo "Monitores conectados al inicio: $MONITORS" >> "$CACHE_LOG"

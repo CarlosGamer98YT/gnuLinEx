@@ -1,0 +1,33 @@
+#!/bin/bash
+# /usr/local/bin/gnulinex-powermenu
+# Menú de apagado y control de energía para gnuLinEx (Grulla)
+
+# Si ya está abierto, cerrarlo
+if pidof wlogout >/dev/null 2>&1; then
+    pkill -x wlogout
+    exit 0
+fi
+
+LAYOUT="$HOME/.config/wlogout/layout"
+STYLE="$HOME/.config/wlogout/style.css"
+
+if [ ! -f "$LAYOUT" ]; then
+    LAYOUT="/etc/skel/.config/wlogout/layout"
+fi
+if [ ! -f "$STYLE" ]; then
+    STYLE="/etc/skel/.config/wlogout/style.css"
+fi
+
+if command -v wlogout >/dev/null 2>&1; then
+    wlogout -b 5 -c 0 -r 0 -m 0 --layout "$LAYOUT" --css "$STYLE"
+else
+    # Fallback con wofi si wlogout no estuviese instalado
+    CHOSEN=$(printf "Bloquear\nSuspender\nCerrar sesión\nReiniciar\nApagar" | wofi --dmenu -p "Menú del Sistema")
+    case "$CHOSEN" in
+        "Bloquear") gnulinex-lock ;;
+        "Suspender") systemctl suspend ;;
+        "Cerrar sesión") hyprctl dispatch exit ;;
+        "Reiniciar") systemctl reboot ;;
+        "Apagar") systemctl poweroff ;;
+    esac
+fi

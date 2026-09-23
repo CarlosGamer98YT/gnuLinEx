@@ -1,0 +1,28 @@
+#!/bin/bash
+# /usr/local/bin/gnulinex-brightness
+# Control y notificación de brillo de pantalla para portátiles en gnuLinEx (Grulla)
+
+ACTION="$1"
+
+if ! command -v brightnessctl >/dev/null 2>&1; then
+    exit 0
+fi
+
+case "$ACTION" in
+    up)
+        brightnessctl set 5%+
+        ;;
+    down)
+        brightnessctl set 5%-
+        ;;
+    *)
+        echo "Uso: $0 {up|down}"
+        exit 1
+        ;;
+esac
+
+# Obtener porcentaje actual para notificación OSD
+PERCENT=$(brightnessctl -m | cut -d',' -f4 | tr -d '%')
+if [ -n "$PERCENT" ]; then
+    notify-send -h string:x-canonical-private-synchronous:sys-notify -h int:value:"$PERCENT" -u low "Brillo de pantalla" "${PERCENT}% 󰃠"
+fi

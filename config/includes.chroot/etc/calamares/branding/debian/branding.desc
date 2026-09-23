@@ -1,0 +1,39 @@
+---
+componentName:   debian
+welcomeStyleCalamares: true
+welcomeExpandingLogo: true
+windowExpanding: normal
+windowSize: 800px,580px
+windowPlacement: center
+
+strings:
+    productName:         gnuLinEx
+    shortProductName:    gnuLinEx
+    version:             Grulla
+    shortVersion:        Grulla
+    versionedName:       gnuLinEx (grulla)
+    shortVersionedName:  gnuLinEx (grulla)
+    bootloaderEntryName: gnuLinEx
+    productUrl:          https://gnulinex.vercel.app
+    supportUrl:          https://gnulinex.vercel.app
+    knownIssuesUrl:      https://gnulinex.vercel.app
+    releaseNotesUrl:     https://gnulinex.vercel.app
+    donateUrl:           https://gnulinex.vercel.app
+
+sidebar: widget
+navigation: widget
+
+images:
+    productLogo:         "gnulinex-logo.png"
+    productIcon:         "gnulinex-logo.png"
+    productWelcome:      "welcome.png"
+
+slideshow:               "show.qml"
+
+style:
+   SidebarBackground:    "#26475b"
+   SidebarText:          "#FFFFFF"
+   SidebarTextCurrent:   "#fbfbfb"
+   SidebarBackgroundCurrent: "#265370"
+
+slideshowAPI: 2

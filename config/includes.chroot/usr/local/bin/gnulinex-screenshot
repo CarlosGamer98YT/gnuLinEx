@@ -1,0 +1,50 @@
+#!/bin/bash
+# /usr/local/bin/gnulinex-screenshot
+# Herramienta de capturas de pantalla para gnuLinEx (Grulla)
+
+MODE="${1:-area}"
+SAVE_DIR="$HOME/Imágenes/Capturas"
+mkdir -p "$SAVE_DIR"
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+FILENAME="$SAVE_DIR/captura_$TIMESTAMP.png"
+
+case "$MODE" in
+    area)
+        GEOM=$(slurp 2>/dev/null)
+        if [ -n "$GEOM" ]; then
+            grim -g "$GEOM" "$FILENAME"
+            wl-copy < "$FILENAME"
+            notify-send -i "$FILENAME" "Captura de pantalla" "Área copiada al portapapeles y guardada en:\n$FILENAME"
+        fi
+        ;;
+    full)
+        grim "$FILENAME"
+        wl-copy < "$FILENAME"
+        notify-send -i "$FILENAME" "Captura de pantalla" "Pantalla completa guardada en:\n$FILENAME"
+        ;;
+    window)
+        # Obtener geometría de la ventana activa mediante hyprctl
+        ACTIVE_WIN=$(hyprctl activewindow -j 2>/dev/null)
+        if [ -n "$ACTIVE_WIN" ]; then
+            POS=$(echo "$ACTIVE_WIN" | grep -o '"at": *\[[0-9]*, *[0-9]*\]' | tr -d ' "at:[]')
+            SIZE=$(echo "$ACTIVE_WIN" | grep -o '"size": *\[[0-9]*, *[0-9]*\]' | tr -d ' "size:[]')
+            X=$(echo "$POS" | cut -d',' -f1)
+            Y=$(echo "$POS" | cut -d',' -f2)
+            W=$(echo "$SIZE" | cut -d',' -f1)
+            H=$(echo "$SIZE" | cut -d',' -f2)
+            if [ -n "$X" ] && [ -n "$W" ]; then
+                grim -g "${X},${Y} ${W}x${H}" "$FILENAME"
+                wl-copy < "$FILENAME"
+                notify-send -i "$FILENAME" "Captura de ventana" "Ventana copiada y guardada en:\n$FILENAME"
+            else
+                grim "$FILENAME"
+                wl-copy < "$FILENAME"
+                notify-send -i "$FILENAME" "Captura de pantalla" "Guardada en:\n$FILENAME"
+            fi
+        fi
+        ;;
+    *)
+        echo "Uso: $0 {area|full|window}"
+        exit 1
+        ;;
+esac

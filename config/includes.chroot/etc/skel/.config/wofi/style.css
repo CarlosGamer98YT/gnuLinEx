@@ -1,0 +1,69 @@
+/* ##############################################################################
+   Wofi Style - gnuLinEx (Grulla)
+   Paleta: "Dehesa y Granito"
+   ############################################################################## */
+
+window {
+    margin: 0px;
+    border: 2px solid #2f6a4e;
+    border-radius: 14px;
+    background-color: rgba(20, 26, 23, 0.96);
+    font-family: "Inter", "DejaVu Sans", sans-serif;
+    font-size: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
+}
+
+#input {
+    margin: 14px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #2f6a4e;
+    background-color: rgba(28, 36, 32, 0.9);
+    color: #ffffff;
+    font-weight: 500;
+}
+
+#input:focus {
+    border: 2px solid #4cae7a;
+    outline: none;
+    box-shadow: 0 0 8px rgba(76, 174, 122, 0.4);
+}
+
+#inner-box {
+    margin: 6px 14px 14px 14px;
+    background-color: transparent;
+}
+
+#outer-box {
+    margin: 0px;
+    background-color: transparent;
+}
+
+#scroll {
+    margin: 0px;
+    border: none;
+}
+
+#text {
+    margin: 6px;
+    border: none;
+    color: #eef4f0;
+}
+
+#entry {
+    border-radius: 8px;
+    padding: 7px 12px;
+    margin: 3px 0px;
+    border: none;
+    transition: background-color 0.15s ease;
+}
+
+#entry:selected {
+    background: linear-gradient(135deg, #2f6a4e, #4cae7a);
+    color: #ffffff;
+}
+
+#entry:selected #text {
+    color: #ffffff;
+    font-weight: bold;
+}

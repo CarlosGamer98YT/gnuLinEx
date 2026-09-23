@@ -1,0 +1,303 @@
+# /etc/calamares/modules/netinstall.yaml
+groups:
+  - name: "Sabores del Sistema"
+    description: "Selecciona UN ÚNICO entorno de escritorio o gestor de ventanas a instalar."
+    hidden: false
+    selected: true
+    critical: true
+    subgroups:
+      - name: "Cinnamon"
+        description: "Entorno de escritorio Cinnamon."
+        selected: false
+        packages:
+          - cinnamon
+          - cinnamon-core
+          - task-cinnamon-desktop
+          - lightdm
+          - lightdm-gtk-greeter
+          - network-manager
+          - firefox-esr
+          - flatpak
+          - appstream
+          - vlc
+          - libreoffice
+          - file-roller
+          - gedit
+          - eog
+          - zip
+          - unzip
+          - p7zip-full
+          - gnome-software
+          - gnome-software-plugin-flatpak
+
+      - name: "KDE Plasma"
+        description: "Entorno de escritorio KDE Plasma."
+        selected: false
+        packages:
+          - kde-plasma-desktop
+          - plasma-desktop
+          - sddm
+          - plasma-nm
+          - konsole
+          - dolphin
+          - qt6-wayland
+          - plasma-workspace
+          - qdbus-qt6
+          - breeze-icon-theme
+          - systemsettings
+          - plasma-discover
+          - firefox-esr
+          - flatpak
+          - appstream
+          - vlc
+          - libreoffice
+          - ark
+          - kate
+          - gwenview
+          - zip
+          - unzip
+          - p7zip-full
+          - plasma-discover-backend-flatpak
+
+      - name: "XFCE4"
+        description: "Entorno de escritorio ligero XFCE4."
+        selected: false
+        packages:
+          - xfce4
+          - xfce4-goodies
+          - lightdm
+          - lightdm-gtk-greeter
+          - network-manager-gnome
+          - firefox-esr
+          - flatpak
+          - appstream
+          - vlc
+          - libreoffice
+          - file-roller
+          - mousepad
+          - ristretto
+          - zip
+          - unzip
+          - p7zip-full
+          - gnome-software
+          - gnome-software-plugin-flatpak
+
+      - name: "MATE"
+        description: "Entorno de escritorio MATE."
+        selected: false
+        packages:
+          - mate-desktop-environment
+          - mate-desktop-environment-extras
+          - lightdm
+          - lightdm-gtk-greeter
+          - network-manager-gnome
+          - firefox-esr
+          - flatpak
+          - appstream
+          - vlc
+          - libreoffice
+          - engrampa
+          - pluma
+          - eom
+          - zip
+          - unzip
+          - p7zip-full
+          - gnome-software
+          - gnome-software-plugin-flatpak
+
+      - name: "LXQt"
+        description: "Entorno de escritorio ligero Qt (LXQt)."
+        selected: false
+        packages:
+          - lxqt
+          - sddm
+          - network-manager-gnome
+          - firefox-esr
+          - flatpak
+          - appstream
+          - vlc
+          - libreoffice
+          - ark
+          - featherpad
+          - lximage-qt
+          - zip
+          - unzip
+          - p7zip-full
+          - gnome-software
+          - gnome-software-plugin-flatpak
+
+      - name: "LXDE"
+        description: "Entorno de escritorio ligero X11 (LXDE)."
+        selected: false
+        packages:
+          - lxde
+          - lightdm
+          - lightdm-gtk-greeter
+          - network-manager-gnome
+          - firefox-esr
+          - flatpak
+          - appstream
+          - vlc
+          - libreoffice
+          - xarchiver
+          - mousepad
+          - gpicview
+          - zip
+          - unzip
+          - p7zip-full
+          - gnome-software
+          - gnome-software-plugin-flatpak
+
+      - name: "Budgie"
+        description: "Entorno de escritorio Budgie."
+        selected: false
+        packages:
+          - budgie-desktop
+          - lightdm
+          - lightdm-gtk-greeter
+          - network-manager-gnome
+          - firefox-esr
+          - flatpak
+          - appstream
+          - vlc
+          - libreoffice
+          - labwc
+          - xwayland
+          - file-roller
+          - gedit
+          - eog
+          - zip
+          - unzip
+          - p7zip-full
+          - gnome-software
+          - gnome-software-plugin-flatpak
+
+      - name: "Enlightenment"
+        description: "Gestor de ventanas y entorno Enlightenment."
+        selected: false
+        packages:
+          - enlightenment
+          - terminology
+          - lightdm
+          - lightdm-gtk-greeter
+          - network-manager-gnome
+          - firefox-esr
+          - flatpak
+          - appstream
+          - vlc
+          - libreoffice
+          - file-roller
+          - gedit
+          - ephoto
+          - zip
+          - unzip
+          - p7zip-full
+          - gnome-software
+          - gnome-software-plugin-flatpak
+
+      - name: "Hyprland"
+        description: "Compositor de Wayland dinámico (Hyprland)."
+        selected: false
+        packages:
+          - hyprland
+          - hyprland-guiutils
+          - waybar
+          - kitty
+          - wofi
+          - sddm
+          - hyprpaper
+          - swaybg
+          - mako-notifier
+          - wl-clipboard
+          - mate-polkit
+          - grim
+          - slurp
+          - wlogout
+          - swaylock
+          - swayidle
+          - brightnessctl
+          - playerctl
+          - blueman
+          - bluez
+          - network-manager-gnome
+          - pavucontrol
+          - thunar
+          - thunar-volman
+          - tumbler
+          - gvfs
+          - gvfs-backends
+          - fonts-font-awesome
+          - fonts-inter
+          - fonts-jetbrains-mono
+          - papirus-icon-theme
+          - bibata-cursor-theme
+          - starship
+          - libnotify-bin
+          - xdg-desktop-portal-hyprland
+          - xdg-desktop-portal-gtk
+          - pipewire
+          - pipewire-pulse
+          - wireplumber
+          - xwayland
+          - firefox-esr
+          - flatpak
+          - vlc
+          - ark
+          - kate
+          - imv
+          - zip
+          - unzip
+          - p7zip-full
+          - libreoffice
+          - appstream
+          - gnome-software
+          - gnome-software-plugin-flatpak
+          - htop
+
+      - name: "GNOME"
+        description: "Entorno de escritorio GNOME completo."
+        selected: false
+        packages:
+          - gnome-core
+          - gdm3
+          - gnome-terminal
+          - nautilus
+          - gnome-text-editor
+          - gnome-calculator
+          - gnome-system-monitor
+          - gnome-disk-utility
+          - eog
+          - evince
+          - network-manager-gnome
+          - firefox-esr
+          - flatpak
+          - appstream
+          - vlc
+          - libreoffice
+          - file-roller
+          - zip
+          - unzip
+          - p7zip-full
+          - gnome-software
+          - gnome-software-plugin-flatpak
+
+      - name: "Servidor (Solo Terminal)"
+        description: "Instalación mínima sin entorno gráfico, ideal para servidores."
+        selected: false
+        packages:
+          - openssh-server
+          - tmux
+          - htop
+          - curl
+          - wget
+          - net-tools
+          - vim
+          - sudo
+          - ufw
+          - logrotate
+          - cron
+          - bash-completion
+          - man-db
+          - less
+          - rsync
+          - ca-certificates

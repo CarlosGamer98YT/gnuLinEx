@@ -1,0 +1,38 @@
+# ##############################################################################
+# Mako Notification Daemon Config - gnuLinEx (Grulla)
+# Paleta: "Dehesa y Granito"
+# ##############################################################################
+
+max-visible=5
+sort=-time
+layer=overlay
+anchor=top-right
+
+font=Inter 10
+width=360
+height=130
+margin=14
+padding=12
+border-size=2
+border-radius=10
+
+background-color=#141a17ee
+text-color=#eef4f0
+border-color=#2f6a4e
+progress-color=over #4cae7a
+
+default-timeout=5000
+ignore-timeout=0
+
+[urgency=low]
+border-color=#2c3932
+default-timeout=3000
+
+[urgency=normal]
+border-color=#2f6a4e
+default-timeout=5000
+
+[urgency=high]
+border-color=#c8564a
+text-color=#ffffff
+default-timeout=0

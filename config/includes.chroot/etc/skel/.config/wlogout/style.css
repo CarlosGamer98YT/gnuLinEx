@@ -1,0 +1,63 @@
+/* ##############################################################################
+   Wlogout Style - gnuLinEx (Grulla)
+   Paleta: "Dehesa y Granito" (Inspiración Extremeña)
+   ############################################################################## */
+
+* {
+    background-image: none;
+    box-shadow: none;
+    font-family: "Inter", "DejaVu Sans", sans-serif;
+}
+
+window {
+    background-color: rgba(20, 26, 23, 0.90);
+}
+
+button {
+    color: #eef4f0;
+    background-color: rgba(28, 36, 32, 0.88);
+    border: 2px solid #2f6a4e;
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 600;
+    margin: 14px;
+    padding: 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 28%;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+button:focus, button:active, button:hover {
+    background-color: #2f6a4e;
+    border-color: #d4a359;
+    color: #ffffff;
+    box-shadow: 0 0 18px rgba(76, 174, 122, 0.55);
+    outline-style: none;
+}
+
+#lock {
+    background-image: image(url("/usr/share/wlogout/icons/lock.png"), url("/usr/local/share/wlogout/icons/lock.png"));
+}
+
+#logout {
+    background-image: image(url("/usr/share/wlogout/icons/logout.png"), url("/usr/local/share/wlogout/icons/logout.png"));
+}
+
+#suspend {
+    background-image: image(url("/usr/share/wlogout/icons/suspend.png"), url("/usr/local/share/wlogout/icons/suspend.png"));
+}
+
+#reboot {
+    background-image: image(url("/usr/share/wlogout/icons/reboot.png"), url("/usr/local/share/wlogout/icons/reboot.png"));
+}
+
+#shutdown {
+    background-image: image(url("/usr/share/wlogout/icons/shutdown.png"), url("/usr/local/share/wlogout/icons/shutdown.png"));
+}
+
+#shutdown:focus, #shutdown:active, #shutdown:hover {
+    background-color: #c8564a;
+    border-color: #ff9d94;
+    box-shadow: 0 0 18px rgba(200, 86, 74, 0.65);
+}

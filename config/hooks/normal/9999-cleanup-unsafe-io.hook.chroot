@@ -1,0 +1,6 @@
+#!/bin/sh
+set -e
+
+# Eliminar la configuración temporal de aceleración de dpkg (unsafe-io)
+# para que el sistema final instalado mantenga la integridad y seguridad habitual.
+rm -f /etc/dpkg/dpkg.cfg.d/unsafe-io

@@ -1,0 +1,57 @@
+live-boot
+live-config
+live-config-systemd
+
+# Herramientas críticas del entorno Live
+user-setup
+locales
+keyboard-configuration
+
+# Gestores de sesión y autenticación
+libpam-systemd
+polkitd
+
+# Herramientas de discos y sistemas de archivos (Crítico para Calamares)
+dosfstools
+mtools
+parted
+gdisk
+e2fsprogs
+btrfs-progs
+squashfs-tools
+
+# Núcleo de XFCE y Xorg
+desktop-base
+xfce4
+xfce4-goodies
+xserver-xorg
+xserver-xorg-video-all
+xserver-xorg-input-all
+dbus-x11
+
+# Gestor de inicio de sesión
+lightdm
+lightdm-gtk-greeter
+
+# Herramientas solicitadas y necesarias
+konsole
+ca-certificates
+calamares
+calamares-settings-debian
+network-manager
+sudo
+systemd-timesyncd
+
+# Herramientas Web
+firefox-esr
+
+# Grub
+grub-efi 
+grub-efi-amd64 
+grub-efi-amd64-bin 
+grub-efi-amd64-signed 
+grub-pc-bin
+efibootmgr 
+shim-signed 
+mtools 
+os-prober
